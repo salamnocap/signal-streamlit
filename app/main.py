@@ -25,15 +25,16 @@ with st.sidebar:
     st.title('Навигация')
     st.page_link(
         page='main.py',
-        label='Home 🏠',
+        label='Домой 🏠',
         use_container_width=True,
-        help='Go to Home page',
+        help='Вернуться на главную страницу',
         disabled=True
     )
     st.page_link(
         page='pages/1_file.py',
-        label='Convert File 📁',
-        use_container_width=True
+        label='Конвертировать файл 📁',
+        use_container_width=True,
+        help='В этом разделе вы можете конвертировать файл сигналов'
     )
     st.markdown('---')
 
@@ -44,14 +45,20 @@ st.markdown('---')
 
 with st.form(key='convert_signal'):
     st.text('Конвертировать параметр сигнала в HEX и DEC')
-    signal = st.text_input('Введите параметр сигнала',
-                           value='X100',
-                           max_chars=8,
-                           help='Пример: X101, Y1, T1013, M20, V14747, CV215'
+    signal = st.text_input(
+        'Введите параметр сигнала',
+        value='X100',
+        max_chars=8,
+        help='Пример: X101, Y1, T1013, M20, V14747, CV215'
     )
+    col1, col2 = st.columns([4,1])
 
-    if st.form_submit_button('Конвертировать', type='primary'):
+    button = col2.form_submit_button('Конвертировать', type='primary', use_container_width=True)
+
+    if button:
         try:
+            st.markdown('---')
+            st.write('Результат:')
             result = signals.get_signals_by_param(signal)
             st.dataframe(result, use_container_width=True)
         except ValueError as e:
@@ -69,9 +76,13 @@ with st.form(key='convert_signals'):
         max_chars=1000,
         help='Пример: X101, Y1, T1013, M20, V14747, CV215'
     )
+    col1, col2 = st.columns([4,1])
 
-    if st.form_submit_button('Конвертировать', type='primary'):
+    button = col2.form_submit_button('Конвертировать', type='primary', use_container_width=True)
+    if button:
         try:
+            st.markdown('---')
+            st.write('Результат:')
             result = signals.get_signals_by_params(signals_list.split('\n'))
             st.dataframe(result, use_container_width=True)
         except ValueError as e:
