@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "signal-streamlit"
+version = "0.1.0"
+description = ""
+authors = ["Salamat <102606434+skuantaiuly@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pandas = "^2.2.2"
+streamlit = "^1.36.0"
+st-pages = "^0.5.0"
+openpyxl = "^3.1.5"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
