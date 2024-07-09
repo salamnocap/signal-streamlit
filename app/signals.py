@@ -74,9 +74,9 @@ class Signals:
                     signal_data[column_name] = data.loc[
                         data['Переменная'] == variable, column
                     ].values[0]
-
-            signal_data['addr'] = signal_data['dec']
-            signal_data['waddr'] = signal_data['dec']
+            if 'dec' in signal_data:
+                signal_data['addr'] = signal_data['dec']
+                signal_data['waddr'] = signal_data['dec']
             signal_data['broker'], signal_data['topic'] = None, None
             signal_data.pop('dec', None)
             signal_data.pop('hex', None)
@@ -94,7 +94,6 @@ class Signals:
             'broker', 'mqttstring', 'sub', 'pub', 'retain'
         ]
 
-        # Reorder columns according to the desired order
         params_df = params_df.reindex(columns=column_order)
 
         return params_df

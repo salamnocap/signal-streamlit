@@ -1,10 +1,14 @@
+import io
+import os
+import csv
 import streamlit as st
 import pandas as pd
-import io
+
 from datetime import datetime
 from signals import Signals
 
 TITLE = 'Convert File'
+PREPROCESSED_PATH = 'static/preprocessed'
 
 st.set_page_config(
     page_title=TITLE,
@@ -60,12 +64,18 @@ def change_group_name(name: str) -> pd.DataFrame:
     return data
 
 
-def save_to_file(df1: pd.DataFrame, df2: pd.DataFrame) -> io.BytesIO:
+def save_to_file(df1: pd.DataFrame, df2: pd.DataFrame, type: str) -> io.BytesIO:
     buffer = io.BytesIO()
     df1.to_csv(buffer, header=False, index=False)
     buffer.seek(0, io.SEEK_END)
-    df2.to_csv(buffer, header=False, index=False, mode='a')
+    df2.to_csv(buffer, index=False, mode='a')
     buffer.seek(0)
+    if type == 'xlsx':
+        data = pd.read_csv(buffer)
+        data = data.rename(columns=lambda x: x if x in ['name', 'parent'] else '')
+        buffer = io.BytesIO()
+        data.to_excel(buffer, index=False)
+        buffer.seek(0)
     return buffer
 
 
@@ -107,11 +117,19 @@ if uploaded_file is not None:
         st.write("Converted Data:")
         st.dataframe(converted_df, use_container_width=True)
 
-        data_csv = save_to_file(groups_data, converted_df)
+        data_csv = save_to_file(groups_data, converted_df, 'csv')
+        data_xlsx = save_to_file(groups_data, converted_df, 'xlsx')
         st.download_button(
             label='Скачать конвертированный файл 📄(.csv)',
             type='primary',
             data=data_csv,
             file_name=f'converted_signals_{datetime.now()}.csv',
             mime='application/octet-stream'
+        )
+        st.download_button(
+            label='Скачать конвертированный файл 📄(.xlsx)',
+            type='primary',
+            data=data_xlsx,
+            file_name=f'converted_signals_{datetime.now()}.xlsx',
+            mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         )
